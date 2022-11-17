@@ -46,9 +46,8 @@ void play_tune(volatile unsigned int *ptrToRadio, float base_frequency)
 	}
 }
 
-
 void print_benchmark(volatile unsigned int *periph_base)
-{
+{   
     // the below code does a little benchmark, reading from the peripheral a bunch 
     // of times, and seeing how many clocks it takes.  You can use this information
     // to get an idea of how fast you can generally read from an axi-lite slave device
@@ -63,19 +62,14 @@ void print_benchmark(volatile unsigned int *periph_base)
     // how much data was transferred? How long did it take?
     //unsigned int data;
     //data = *(periph_base+RADIO_TUNER_FAKE_ADC_PINC_OFFSET);
-    //throughput = (data)/((stop_time-start_time)*(8e-9));
-    throughput = (2048*32)/(8e-9)*(stop_time-start_time)))/8000000;
-	// 8e-9 represents time per clock or 1/125000000
-	// Total time represented by (8e-9) multipled by the number of clocks or (stop_time-start_time)
-	// I assumed my resulting calculation would be in bits/s so I divided the whole calculation by 8000000 to convert to megabytes
-	// 32 represents the amount of bits being output per clock?
-	// I was trying to get it into a megabyte/seconds format with the way I structured the equation but not really knowing if it was correct
-	// When multiplying 2048 (value from for loop), in all honesty, I heard in one of the recorded lectures that you stated students were 
-	// getting 20 megabytes (I could be wrong)
-	// So when I multipied my equation by 2048 to see what would happen. My result ended up being about 22 megabytes so I left it as is and tried not to
-	// question it too much since I was rushing to leave for work.
+    throughput = ((2048*32)/((8e-9)*(stop_time-start_time)))/8000000;    
   
-    printf("Estimated Transfer throughput = %f Mbytes/sec",throughput); 
+    printf("Estimated Transfer throughput = %f Mbytes/sec\n",throughput);
+}
+
+void control(volatile unsigned int* ptrToRadio, int val)
+{
+    *(ptrToRadio+RADIO_TUNER_CONTROL_REG_OFFSET) = val;
 }
 
 int main()
@@ -83,7 +77,8 @@ int main()
 
 // first, get a pointer to the peripheral base address using /dev/mem and the function mmap
     volatile unsigned int *my_periph = get_a_pointer(RADIO_PERIPH_ADDRESS);	
-
+    
+    control(my_periph,1);
     printf("\r\n\r\n\r\nLab 6 Albert Armienta - Custom Peripheral Demonstration\n\r");
     printf("Tuning Radio to 30MHz\n\r");
     radioTuner_tuneRadio(my_periph,30e6);
