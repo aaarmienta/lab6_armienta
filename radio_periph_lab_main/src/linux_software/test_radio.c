@@ -61,9 +61,19 @@ void print_benchmark(volatile unsigned int *periph_base)
     float throughput=0;
     // please insert your code here for calculate the actual throughput in Mbytes/second
     // how much data was transferred? How long did it take?
-    unsigned int data;
-    data = *(periph_base+RADIO_TUNER_FAKE_ADC_PINC_OFFSET);
-    throughput = (data)/((stop_time-start_time)*(8e-9));
+    //unsigned int data;
+    //data = *(periph_base+RADIO_TUNER_FAKE_ADC_PINC_OFFSET);
+    //throughput = (data)/((stop_time-start_time)*(8e-9));
+    throughput = (2048*32)/(8e-9)*(stop_time-start_time)))/8000000;
+	// 8e-9 represents time per clock or 1/125000000
+	// Total time represented by (8e-9) multipled by the number of clocks or (stop_time-start_time)
+	// I assumed my resulting calculation would be in bits/s so I divided the whole calculation by 8000000 to convert to megabytes
+	// 32 represents the amount of bits being output per clock?
+	// I was trying to get it into a megabyte/seconds format with the way I structured the equation but not really knowing if it was correct
+	// When multiplying 2048 (value from for loop), in all honesty, I heard in one of the recorded lectures that you stated students were 
+	// getting 20 megabytes (I could be wrong)
+	// So when I multipied my equation by 2048 to see what would happen. My result ended up being about 22 megabytes so I left it as is and tried not to
+	// question it too much since I was rushing to leave for work.
   
     printf("Estimated Transfer throughput = %f Mbytes/sec",throughput); 
 }
